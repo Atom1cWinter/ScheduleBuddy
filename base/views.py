@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+
 from .models import Profile  #need to import your Profile model
 from .forms import ProfileForm  # need to create this form
 from .models import Course # course template import
@@ -56,3 +58,43 @@ def profile_edit(request):
 def course_list(request):
     courses = Course.objects.all()
     return render(request, 'course_list.html', {'courses': courses})
+
+def add_course(request):
+    if request.method == 'POST':
+        # Extract data from request
+        title = request.POST.get('title')
+        course_number = request.POST.get('course_number')
+        professor = request.POST.get('professor')
+        start_date = request.POST.get('start_date')
+        meeting_dates = request.POST.get('meeting_dates')
+        meeting_times = request.POST.get('meeting_times')
+        end_date = request.POST.get('end_date')
+        class_type = request.POST.get('class_type')
+        location = request.POST.get('location')
+
+        # create and save course
+        course = Course.objects.create(
+            title = title,
+            course_number = course_number,
+            professor = professor,
+            start_date = start_date,
+            meeting_dates = meeting_dates,
+            meeting_times = meeting_times,
+            end_date = end_date,
+            class_type = class_type,
+            location = location
+        )
+        return JsonResponse({'message' : 'Course added successfully!', 'course_id' : course.id})
+    else:
+        return JsonResponse({'error' : 'Invalid request method. Use POST.'}, status = 400)
+    
+    def get_courses(request):
+        if request.method == 'GET':
+            #retrieve all courses
+            courses = Course.objects.all().values(
+                'id', 'title', 'course_number', 'professor', 'start_date',
+                'meeting_dates', 'meeting_times', 'end_date', 'class_type', 'location'
+            )
+            return JsonResponse({'courses' : list(courses)})
+        else:
+            return JsonResponse({'error': 'Invalid request method. Use GET'}, status = 400)
