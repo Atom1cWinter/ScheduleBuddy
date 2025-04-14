@@ -37,6 +37,7 @@ class Course(models.Model):
     meeting_times = models.TimeField() # Time is saved in HH:MM:SS format
     end_date = models.DateField() # YYYY-MM-DD
     class_type = models.CharField(max_length=50, choices=[('In-Class', 'In-Class'), ('Virtual', 'Virtual'), ('Mixed', 'Mixed')])
+    location = models.CharField(max_length=200)
 
     def __str__(self):
         return f"{self.title} ({self.course_number})"

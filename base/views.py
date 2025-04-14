@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .models import Profile  #need to import your Profile model
 from .forms import ProfileForm  # need to create this form
+from .models import Course # course template import
 
 def home(request):
     return render(request, 'base/home.html')
@@ -50,3 +51,8 @@ def profile_edit(request):
         form = ProfileForm(instance=request.user.profile)
     
     return render(request, 'profiles/profile_edit.html', {'form': form})
+
+
+def course_list(request):
+    courses = Course.objects.all()
+    return render(request, 'course_list.html', {'courses': courses})

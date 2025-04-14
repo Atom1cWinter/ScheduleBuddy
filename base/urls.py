@@ -10,4 +10,5 @@ urlpatterns = [
     path('waitListClearance', views.waitListClearance, name="waitListClearance"),
     path('openSeat/', views.openSeat, name="openSeat"),
     path('sectionRec/', views.sectionRec, name="sectionRec"),
+    path('courses/', views.course_list, name='course_list'),
 ]
