@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 
 from .models import Profile  #need to import your Profile model
 from .forms import ProfileForm  # need to create this form
@@ -89,12 +90,24 @@ def add_course(request):
         return JsonResponse({'error' : 'Invalid request method. Use POST.'}, status = 400)
     
     def get_courses(request):
+        # Function requires course grabbing course ID using dynamic URL parameter
+        # Add course ID at the end of URL request
         if request.method == 'GET':
-            #retrieve all courses
-            courses = Course.objects.all().values(
-                'id', 'title', 'course_number', 'professor', 'start_date',
-                'meeting_dates', 'meeting_times', 'end_date', 'class_type', 'location'
-            )
-            return JsonResponse({'courses' : list(courses)})
+            # retrieve the course by its ID
+            course = get_object_or_404(Course, id=course_id)
+            # return course details as JSON
+            course_data = {
+                'id' : course.id,
+                'title' : course.title,
+                'course_number' : course.course_number,
+                'professor' : course.professor,
+                'start_date' : course.start_date,
+                'meeting_dates' : course.meeting_dates,
+                'meeting_times' : course.meeting_times,
+                'end_date' : course.end_date,
+                'class_type' : course.class_type,
+                'location' : course.location,
+            }
+            return JsonResponse(course_data)
         else:
             return JsonResponse({'error': 'Invalid request method. Use GET'}, status = 400)

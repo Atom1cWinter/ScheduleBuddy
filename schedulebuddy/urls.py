@@ -11,6 +11,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('base.urls')),
     path('add_course/', views.add_course, name='add_course'),
-    path('get_courses/', views.get_courses, name='get_courses')
-    
+    path('get_courses/<int:course_id>/', views.get_courses, name='get_courses')
+
 ]
