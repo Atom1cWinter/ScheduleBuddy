@@ -93,21 +93,21 @@ def add_course(request):
         # Function requires course grabbing course ID using dynamic URL parameter
         # Add course ID at the end of URL request
         if request.method == 'GET':
-            # retrieve the course by its ID
-            course = get_object_or_404(Course, id=course_id)
+            # split URL into IDs and fetch courses
+            id_list = ids.split(',')
+            courses = Course.objects.filter(id__in = id_list).values(
+                'id',
+                'title',
+                'course_number',
+                'professor',
+                'start_date',
+                'meeting_dates',
+                'meeting_times',
+                'end_date',
+                'class_type',
+                'location',
+            )
             # return course details as JSON
-            course_data = {
-                'id' : course.id,
-                'title' : course.title,
-                'course_number' : course.course_number,
-                'professor' : course.professor,
-                'start_date' : course.start_date,
-                'meeting_dates' : course.meeting_dates,
-                'meeting_times' : course.meeting_times,
-                'end_date' : course.end_date,
-                'class_type' : course.class_type,
-                'location' : course.location,
-            }
-            return JsonResponse(course_data)
+            return JsonResponse({'courses' : list(courses)})
         else:
             return JsonResponse({'error': 'Invalid request method. Use GET'}, status = 400)
