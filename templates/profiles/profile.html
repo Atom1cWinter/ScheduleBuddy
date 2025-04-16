@@ -1,0 +1,32 @@
+{% extends 'base/main.html' %}
+
+{% block content %}
+<div class="profile-view">
+    <div class="profile-header">
+        {% if profile.profile_picture %}
+        <img src="{{ profile.profile_picture.url }}" 
+             alt="Profile Picture" 
+             class="profile-avatar">
+        {% endif %}
+        <h1>{{ profile.full_name }}</h1>
+    </div>
+
+    <div class="profile-details">
+        <div class="detail-item">
+            <span class="detail-label">Email:</span>
+            <span class="detail-value">{{ profile.email }}</span>
+        </div>
+        
+        <div class="detail-item">
+            <span class="detail-label">Phone:</span>
+            <span class="detail-value">
+                {{ profile.phone_number|default:"Not provided" }}
+            </span>
+        </div>
+        
+        <a href="{% url 'profile_edit' %}" class="btn-edit">
+            Edit Profile
+        </a>
+    </div>
+</div>
+{% endblock %}
