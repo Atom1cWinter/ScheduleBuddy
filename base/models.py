@@ -14,30 +14,28 @@ class Profile(models.Model):
         return self.user.username
 
 
-# Model for course template
-# params:
-# course title, number, professor, start date, meeting dates, meeting times, class type
+# Model for course template and section
+# split them for easier integration
 
-class Course(models.Model): 
+class Course(models.Model):
+    code = models.CharField(max_length=20)
     title = models.CharField(max_length=200)
-    course_number = models.CharField(max_length=50)
-    professor = models.CharField(max_length=100)
-    start_date = models.DateField() # Dates saved as YYYY-MM-DD
-    meeting_dates = models.CharField(
-        max_length=20, 
-        choices=[
-            ('Monday', 'Monday'),
-            ('Tuesday', 'Tuesday'),
-            ('Wednesday', 'Wednesday'),
-            ('Thursday', 'Thursday'),
-            ('Friday', 'Friday'),
-            ('Saturday', 'Saturday'),
-            ('Sunday', 'Sunday'),
-            ]) 
-    meeting_times = models.TimeField() # Time is saved in HH:MM:SS format
-    end_date = models.DateField() # YYYY-MM-DD
-    class_type = models.CharField(max_length=50, choices=[('In-Class', 'In-Class'), ('Virtual', 'Virtual'), ('Mixed', 'Mixed')])
-    location = models.CharField(max_length=200)
+    credits = models.IntegerField()
+    description = models.TextField()
+    prerequisites = models.TextField(blank=True)
+    corerequistes = models.TextField(blank=True)
+    crossListed = models.TextField(blank=True)
 
     def __str__(self):
-        return f"{self.title} ({self.course_number})"
+        return f"{self.code}: {self.title}"
+
+class Section(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    section_id = models.CharField(max_length=10)
+    instructor = models.CharField(max_length=100)
+    days = models.CharField(max_length=10)
+    time = models.CharField(max_length=20)
+    location = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.course.code} - Section {self.section_id}"
