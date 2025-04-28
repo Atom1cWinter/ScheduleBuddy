@@ -21,10 +21,10 @@ class Course(models.Model):
     code = models.CharField(max_length=20)
     title = models.CharField(max_length=200)
     credits = models.IntegerField()
-    description = models.TextField()
     prerequisites = models.TextField(blank=True)
     corerequistes = models.TextField(blank=True)
     crossListed = models.TextField(blank=True)
+    description = models.TextField()
 
     def __str__(self):
         return f"{self.code}: {self.title}"
