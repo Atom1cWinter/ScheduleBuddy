@@ -19,26 +19,44 @@ class Profile(models.Model):
 
 class Course(models.Model):
     code = models.CharField(max_length=20, default='UNKN')
-    title = models.CharField(max_length=200)
-    credits = models.IntegerField( default=-1)
-    prerequisites = models.TextField(blank=True)
-    corerequistes = models.TextField(blank=True)
-    crossListed = models.TextField(blank=True)
-    description = models.TextField(default='UNKN')
+    name = models.CharField(max_length=200, default='Untitled Course')
+    credits = models.IntegerField(default=0)
+    prerequisites = models.TextField(blank=True, default='')
+    corequisites = models.TextField(blank=True, default='')
+    crosslisted_courses = models.TextField(blank=True, default='')
+    description = models.TextField(blank=True, default='No description provided.')
 
     def __str__(self):
-        return f"{self.code}: {self.title}"
+        return f"{self.code}: {self.name}"
+
 
 class Section(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    section_id = models.CharField(max_length=10)
-    instructor = models.CharField(max_length=100)
-    days = models.CharField(max_length=10)
-    time = models.CharField(max_length=20)
-    location = models.CharField(max_length=100)
+    term = models.CharField(max_length=20, default='TBD')
+    crn = models.CharField(max_length=10, default='00000')
+    section_code = models.CharField(max_length=10, default='A')
+    instructor_first_name = models.CharField(max_length=100, blank=True, default='')
+    instructor_last_name = models.CharField(max_length=100, blank=True, default='')
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
+    begins = models.TimeField(null=True, blank=True)
+    ends = models.TimeField(null=True, blank=True)
+    mo = models.BooleanField(default=False)
+    tu = models.BooleanField(default=False)
+    we = models.BooleanField(default=False)
+    th = models.BooleanField(default=False)
+    fr = models.BooleanField(default=False)
+    sa = models.BooleanField(default=False)
+    su = models.BooleanField(default=False)
+    building = models.CharField(max_length=100, blank=True, default='')
+    room = models.CharField(max_length=50, blank=True, default='')
+    mode = models.CharField(max_length=100, blank=True, default='In-Person')
+    instructional_method = models.CharField(max_length=100, blank=True, default='Standard')
+    campus = models.CharField(max_length=100, blank=True, default='Main')
+    college = models.CharField(max_length=100, blank=True, default='Undeclared')
 
     def __str__(self):
-        return f"{self.course.code} - Section {self.section_id}"
+        return f"{self.course.code} - {self.section_code} ({self.term})"
     
 class SchedulingSurvey(models.Model):
     YEAR_CHOICES = [

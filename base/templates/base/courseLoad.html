@@ -1,4 +1,35 @@
 {% extends 'main.html' %}
 {% block content %}
-<h1>Template</h1>
+<h2>Suggested Course Load</h2>
+
+{% if schedule %}
+    <table>
+        <tr>
+            <th>Course</th>
+            <th>Section</th>
+            <th>Instructor</th>
+            <th>Time</th>
+            <th>Days</th>
+            <th>Location</th>
+        </tr>
+        {% for section in schedule %}
+        <tr>
+            <td>{{ section.course.code }} - {{ section.course.name }}</td>
+            <td>{{ section.section_code }}</td>
+            <td>{{ section.instructor_first_name }} {{ section.instructor_last_name }}</td>
+            <td>{{ section.begins }} - {{ section.ends }}</td>
+            <td>
+                {% if section.mo %}M {% endif %}
+                {% if section.tu %}T {% endif %}
+                {% if section.we %}W {% endif %}
+                {% if section.th %}Th {% endif %}
+                {% if section.fr %}F {% endif %}
+            </td>
+            <td>{{ section.building }} {{ section.room }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <p>No course suggestions available.</p>
+{% endif %}
 {% endblock content %}

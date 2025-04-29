@@ -7,6 +7,8 @@ from .models import Profile  #need to import your Profile model
 from .forms import ProfileForm  # need to create this form
 from .models import Course # course template import
 from .forms import SchedulingSurveyForm
+from .models import SchedulingSurvey, Course, Section
+import random
 
 def home(request):
     return render(request, 'base/home.html')
@@ -14,8 +16,7 @@ def home(request):
 def calendarSync(request):
     return render(request, 'base/calendarSync.html')
 
-def courseLoad(request):
-    return render(request, 'base/courseLoad.html')
+
 
 def roadMap(request):
     return render(request, 'base/roadMap.html')
@@ -126,3 +127,24 @@ def survey_view(request):
 
 def thank_you(request):
     return render(request, 'base/thankyou.html')
+@login_required
+def courseLoad(request):
+    user = request.user
+    try:
+        survey = SchedulingSurvey.objects.get(user=user)
+    except SchedulingSurvey.DoesNotExist:
+        return render(request, 'no_survey.html')
+
+    all_courses = Course.objects.all()
+    suggested_courses = random.sample(list(all_courses), min(5, len(all_courses)))
+
+    schedule = []
+    for course in suggested_courses:
+        sections = Section.objects.filter(course=course)
+        if sections.exists():
+            schedule.append(sections.first())
+
+    return render(request, 'courseLoad.html', {
+        'survey': survey,
+        'schedule': schedule,
+    })

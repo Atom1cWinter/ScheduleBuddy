@@ -15,4 +15,5 @@ urlpatterns = [
     path('thank-you/', views.thank_you, name='survey_thankyou'),
     path('add_course/', views.add_course, name='add_course'),
     path('get_courses/<str:ids>/', views.get_courses, name='get_courses'),
+    
 ]
