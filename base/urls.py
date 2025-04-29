@@ -11,4 +11,8 @@ urlpatterns = [
     path('openSeat/', views.openSeat, name="openSeat"),
     path('sectionRec/', views.sectionRec, name="sectionRec"),
     path('courses/', views.course_list, name='course_list'),
+    path('survey/', views.survey_view, name='survey'),
+    path('thank-you/', views.thank_you, name='survey_thankyou'),
+    path('add_course/', views.add_course, name='add_course'),
+    path('get_courses/<str:ids>/', views.get_courses, name='get_courses'),
 ]

@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404
 from .models import Profile  #need to import your Profile model
 from .forms import ProfileForm  # need to create this form
 from .models import Course # course template import
+from .forms import SchedulingSurveyForm
 
 def home(request):
     return render(request, 'base/home.html')
@@ -89,7 +90,8 @@ def add_course(request):
     else:
         return JsonResponse({'error' : 'Invalid request method. Use POST.'}, status = 400)
     
-    def get_courses(request):
+    
+def get_courses(request):
         # Function requires course grabbing course ID using dynamic URL parameter
         # Add course ID at the end of URL request
         if request.method == 'GET':
@@ -111,3 +113,16 @@ def add_course(request):
             return JsonResponse({'courses' : list(courses)})
         else:
             return JsonResponse({'error': 'Invalid request method. Use GET'}, status = 400)
+        
+def survey_view(request):
+    if request.method == 'POST':
+        form = SchedulingSurveyForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('survey_thankyou')
+    else:
+        form = SchedulingSurveyForm()
+    return render(request, 'base/survey.html', {'form': form})
+
+def thank_you(request):
+    return render(request, 'base/thankyou.html')
