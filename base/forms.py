@@ -42,11 +42,8 @@ class SchedulingSurveyForm(forms.ModelForm):
                 ('online_async', 'Online (asynchronous)'), 
                 ('hybrid', 'Hybrid')
             ]),
-            'preferred_distribution': forms.RadioSelect(choices=[
-                ('morning', 'Morning-heavy'), 
-                ('afternoon', 'Afternoon-heavy'),
-                ('even', 'Evenly distributed')
-            ]),
+            'preferred_distribution': forms.RadioSelect(choices=SchedulingSurvey.PREFERRED_DISTRIBUTION_CHOICES),
+            'time_distribution': forms.RadioSelect(choices=SchedulingSurvey.TIME_DISTRIBUTION_CHOICES),
             'clustered_or_spread': forms.RadioSelect(choices=[
                 ('clustered', 'Clustered on fewer days'),
                 ('spread', 'Spread throughout the week')

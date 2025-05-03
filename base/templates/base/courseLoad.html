@@ -1,35 +1,24 @@
-{% extends 'main.html' %}
-{% block content %}
-<h2>Suggested Course Load</h2>
-
-{% if schedule %}
-    <table>
-        <tr>
-            <th>Course</th>
-            <th>Section</th>
-            <th>Instructor</th>
-            <th>Time</th>
-            <th>Days</th>
-            <th>Location</th>
-        </tr>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Course Load</title>
+</head>
+<body>
+    <h1>Your Suggested Course Load</h1>
+    <ul>
         {% for section in schedule %}
-        <tr>
-            <td>{{ section.course.code }} - {{ section.course.name }}</td>
-            <td>{{ section.section_code }}</td>
-            <td>{{ section.instructor_first_name }} {{ section.instructor_last_name }}</td>
-            <td>{{ section.begins }} - {{ section.ends }}</td>
-            <td>
-                {% if section.mo %}M {% endif %}
-                {% if section.tu %}T {% endif %}
-                {% if section.we %}W {% endif %}
-                {% if section.th %}Th {% endif %}
-                {% if section.fr %}F {% endif %}
-            </td>
-            <td>{{ section.building }} {{ section.room }}</td>
-        </tr>
+            <li>
+                <strong>{{ section.course.name }}</strong> - {{ section.section_code }}<br>
+                <strong>Days:</strong> 
+                {% for day in ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su'] %}
+                    {% if section|getattr:day %}
+                        {{ day|upper }}
+                    {% endif %}
+                {% endfor %}<br>
+                <strong>Time:</strong> {{ section.begins }} - {{ section.ends }}<br>
+                <strong>Location:</strong> {{ section.building }} {{ section.room }}
+            </li>
         {% endfor %}
-    </table>
-{% else %}
-    <p>No course suggestions available.</p>
-{% endif %}
-{% endblock content %}
+    </ul>
+</body>
+</html>

@@ -16,5 +16,6 @@ urlpatterns = [
     path('get_courses/<str:ids>/', views.get_courses, name='get_courses'),
     path('create_schedule/', views.create_schedule, name='create_schedule'),
     path('export_schedule/<int:schedule_id>/', views.export_schedule_to_google_calendar, name='export_schedule'),
+    path('recommend_section/<int:course_id>/', views.recommend_section, name='recommend_section'),
     
 ]

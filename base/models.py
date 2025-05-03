@@ -1,6 +1,7 @@
 from django.db import models
 
 from django.contrib.auth.models import User
+from django.forms import ValidationError
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -67,6 +68,18 @@ class SchedulingSurvey(models.Model):
         ('GR', 'Graduate'),
     ]
 
+    PREFERRED_DISTRIBUTION_CHOICES = [
+        ('MWF', 'Monday/Wednesday/Friday'),
+        ('TTH', 'Tuesday/Thursday'),
+        ('Spread', 'Spread Across Week'),
+    ]
+
+    TIME_DISTRIBUTION_CHOICES = [
+        ('morning', 'Morning-heavy'),
+        ('afternoon', 'Afternoon-heavy'),
+        ('even', 'Evenly distributed'),
+    ]
+
     name = models.CharField(max_length=100)
     email = models.EmailField()
     year = models.CharField(max_length=2, choices=YEAR_CHOICES)
@@ -92,7 +105,18 @@ class SchedulingSurvey(models.Model):
     career_goals = models.TextField(blank=True)
     elective_interests = models.TextField(blank=True)
 
-    preferred_distribution = models.CharField(max_length=50)
+    preferred_distribution = models.CharField(
+        max_length=50,
+        choices=PREFERRED_DISTRIBUTION_CHOICES,
+        default='Spread'
+    )
+    
+    time_distribution = models.CharField(
+        max_length=50,
+        choices=TIME_DISTRIBUTION_CHOICES,
+        default='even'
+    )
+
     max_classes_per_day = models.IntegerField()
     min_gap_minutes = models.IntegerField()
     clustered_or_spread = models.CharField(max_length=50)
@@ -114,7 +138,7 @@ class Schedule(models.Model):
 
     def clean(self):
         if self.start_date and self.end_date and self.start_date > self.end_date:
-            raise Validationerror("End date must be after start date.")
+            raise ValidationError("End date must be after start date.")
         if self.begins and self.ends and self.begins >= self.ends:
             raise ValidationError("End time must be after start time.")
         
