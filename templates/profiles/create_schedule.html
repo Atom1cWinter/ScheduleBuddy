@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Create Schedule</title>
+    </head>
+    <body>
+        <h1>Create a Schedule</h1>
+        <form method="Post">
+            {% csrf_token %}
+            <label for="name">Schedule Name:</label>
+            <input type="text" id="name" name="name" required><br><br>
+
+            <label for="sections">Select Sections:</label><br>
+            {% for section in sections %}
+                <input type="checkbox" name="sections" value="{{section.id}}">
+                {{ section.course.name }} - {{ section.section_code }} ({{ section.term }})<br>
+            {% endfor %}
+
+            <button type="submit">Create Schedule</button>
+        </form>
+    </body>
+</html>

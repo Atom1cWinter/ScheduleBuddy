@@ -1,5 +1,4 @@
 from django.urls import path
-
 from . import views
 
 urlpatterns = [
@@ -15,5 +14,7 @@ urlpatterns = [
     path('thank-you/', views.thank_you, name='survey_thankyou'),
     path('add_course/', views.add_course, name='add_course'),
     path('get_courses/<str:ids>/', views.get_courses, name='get_courses'),
+    path('create_schedule/', views.create_schedule, name='create_schedule'),
+    path('export_schedule/<int:schedule_id>/', views.export_schedule_to_google_calendar, name='export_schedule'),
     
 ]

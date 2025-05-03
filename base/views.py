@@ -3,12 +3,17 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 
-from .models import Profile  #need to import your Profile model
+from .models import Profile  # need to import your Profile model
 from .forms import ProfileForm  # need to create this form
 from .models import Course # course template import
 from .forms import SchedulingSurveyForm
 from .models import SchedulingSurvey, Course, Section
+from .models import Schedule # Calendar setup
+from googleapiclient.discovery import build
+from google.oauth2.credentials import Credentials
+
 import random
+import datetime
 
 def home(request):
     return render(request, 'base/home.html')
@@ -148,3 +153,60 @@ def courseLoad(request):
         'survey': survey,
         'schedule': schedule,
     })
+
+def create_schedule(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        section_ids = request.POST.getlist('sections') # List of section IDs
+        sections = Section.objects.filter(id__in = section_ids)
+
+        schedule = Schedule.objects.create(user = request.user, name = name)
+        schedule.sections.set(sections)
+
+        return JsonResponse({'message' : 'Schedule created successfully!', 'schedule_id' : schedule.id})
+    else:
+        sections = Section.objects.all()
+        return render(request, 'create_schedule.html', {'sections' : sections})
+    
+def export_schedule_to_google_calendar(request, schedule_id):
+    # Load the schedule
+    schedule = Schedule.objects.get(id = schedule_id, user=request.user)
+    sections = schedule.sections.all()
+
+    # Load Google Calendar credentials
+    creds = Credentials.from_authorized_user_file('credentials.json', ['https://www.googleapis.com/auth/calendar'])
+    service = build('calendar', 'v3', credentials=creds)
+
+    # Iterate through sections and add them to Google Calendar
+    for section in sections:
+        # Format the recurrence rule for meeting days
+        meeting_days = []
+        if section.mo: meeting_days.append('MO')
+        if section.tu: meeting_days.append('TU')
+        if section.we: meeting_days.append('WE')
+        if section.th: meeting_days.append('TH')
+        if section.fr: meeting_days.append('FR')
+        if section.sa: meeting_days.append('SA')
+        if section.su: meeting_days.append('SU')
+
+        # create the event
+        event = {
+            'summary': section.course.name, # Course name
+            'description': f"Start Date: {section.start_date}, End Date: {section.end_date}",
+            'start': {
+                'dateTime': f"{section.start_date}T{section.begins}", # Start date and time
+                'TimeZone': 'America/New_York', # Default Timezone for UNCC
+            },
+            'end': {
+                'dateTime': f"{section.start_date}T{section.ends}", # End date and time
+                'timeZone': 'America/New_York',
+            },
+            'recurrence': [
+                f"RRULE:FREQ=WEEKLY;BYDAY={','.join(meeting_days)};UNTIL={section.end_date.strftime('%Y%m%d')}T235959Z"
+            ],
+        }
+
+        # Insert the event into Google Calendar
+        service.events().insert(calendarId='primary', body = event).execute()
+
+    return JsonResponse({'message' : 'Schedule exported to Google Calendar successfully!'})

@@ -103,3 +103,20 @@ class SchedulingSurvey(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.email})"
+    
+# Calendar Implementation
+class Schedule(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    sections = models.ManyToManyField(Section)
+    created_at = models.DateTimeField(auto_now_add=True)
+    google_calendar_event_id = models.CharField(max_length=255, blank=True, null=True)
+
+    def clean(self):
+        if self.start_date and self.end_date and self.start_date > self.end_date:
+            raise Validationerror("End date must be after start date.")
+        if self.begins and self.ends and self.begins >= self.ends:
+            raise ValidationError("End time must be after start time.")
+        
+    def __str__(self):
+        return f"{self.name} ({self.user.username})"
