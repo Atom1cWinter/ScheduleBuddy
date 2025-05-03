@@ -214,6 +214,16 @@ def export_schedule_to_google_calendar(request, schedule_id):
     return JsonResponse({'message' : 'Schedule exported to Google Calendar successfully!'})
 
 @login_required
+def calendarySync(request):
+    # Retrive the user's schedule (assuming one schedule per user)
+    try:
+        schedule = Schedule.objects.get(user=request.user)
+    except Schedule.DoesNotExist:
+        return render(request, 'base/calendarSync.html', {'error': 'No schedule found.'})
+    
+    return render(request, 'base/calendarSync.html', {'schedule_id' : 'schedlue.id'})
+
+@login_required
 def recommend_section(request, course_id):
     user = request.user
 

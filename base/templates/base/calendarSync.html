@@ -1,4 +1,18 @@
-{% extends 'main.html' %}
-{% block content %}
-<h1>Template</h1>
-{% endblock content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Calendar Sync</title>
+</head>
+<body>
+    <h1>Sync Your Schedule with Google Calendar</h1>
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% else %}
+        <p>Click the button below to sync your schedule with Google Calendar.</p>
+        <form method="post" action="{% url 'export_schedule' schedule_id %}">
+            {% csrf_token %}
+            <button type="submit">Sync with Google Calendar</button>
+        </form>
+    {% endif %}
+</body>
+</html>
