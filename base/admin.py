@@ -9,6 +9,7 @@ class CourseAdmin(admin.ModelAdmin):
     #list_filter = ('class_type', 'meeting_dates')
     search_fields = ('title', 'course_number', 'professor')
 
-@admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('user' , 'survey_results')
+    list_display = ('user', 'full_name', 'survey_results')  # Add 'survey_results' here
+
+admin.site.register(Profile, ProfileAdmin)

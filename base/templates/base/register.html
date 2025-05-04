@@ -10,12 +10,6 @@
         {{ form.as_p }}
         <button type="submit">Register</button>
     </form>
-    {% if form.errors %}
-        <ul>
-            {% for field, errors in form.errors.items %}
-                <li>{{ field }}: {{ errors|join:", " }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+    <a href="{% url 'login' %}">Already have an account? Login here</a>
 </body>
 </html>

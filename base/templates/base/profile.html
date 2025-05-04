@@ -2,14 +2,67 @@
 
 {% block content %}
     <h1>{{ user.username }}'s Profile</h1>
-    <p><strong>Full Name:</strong> {{ user.profile.full_name }}</p>
-    <p><strong>Email:</strong> {{ user.email }}</p>
-    <p><strong>Date of Birth:</strong> {{ user.profile.date_of_birth }}</p>
-    <p><strong>Phone Number:</strong> {{ user.profile.phone_number }}</p>
-    <p><strong>Additional Info:</strong> {{ user.profile.additional_info }}</p>
-    {% if user.profile.profile_picture %}
-        <p><strong>Profile Picture:</strong></p>
-        <img src="{{ user.profile.profile_picture.url }}" alt="Profile Picture" style="max-width: 200px;">
+
+    <h2>Edit Your Profile</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save Changes</button>
+    </form>
+
+    <hr>
+
+    <h2>Your Latest Survey</h2>
+    {% if user.profile.survey %}
+        <p><strong>Year:</strong> {{ user.profile.survey.year }}</p>
+        <p><strong>Major:</strong> {{ user.profile.survey.major }}</p>
+        <p><strong>Preferred Times:</strong> {{ user.profile.survey.preferred_times }}</p>
+        <p><strong>Preferred Days:</strong> {{ user.profile.survey.preferred_days }}</p>
+        <p><strong>Learning Style:</strong> {{ user.profile.survey.learning_style }}</p>
+        <a href="{% url 'survey' %}">Retake Survey</a>
+    {% else %}
+        <p>No survey results found.</p>
+        <a href="{% url 'survey' %}">Take Survey</a>
     {% endif %}
-    <a href="{% url 'home' %}">Back to Home</a>
+
+    <hr>
+
+    <h2>Your Last Generated Schedule</h2>
+    {% if last_schedule %}
+        <h3>{{ last_schedule.name }}</h3>
+        <ul>
+            {% for section in last_schedule.sections.all %}
+                <li>
+                    {{ section.course.code }} - {{ section.course.name }} ({{ section.section_code }})
+                    <br>
+                    <strong>Time:</strong> {{ section.begins }} - {{ section.ends }}
+                    <br>
+                    <strong>Days:</strong>
+                    {% if section.mo %} Monday {% endif %}
+                    {% if section.tu %} Tuesday {% endif %}
+                    {% if section.we %} Wednesday {% endif %}
+                    {% if section.th %} Thursday {% endif %}
+                    {% if section.fr %} Friday {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+        <a href="{% url 'calendar_sync' %}">Sync with Google Calendar</a>
+    {% else %}
+        <p>No schedule has been generated yet.</p>
+    {% endif %}
+
+    <h2>All Your Schedules</h2>
+    <ul>
+        {% for schedule in schedules %}
+            <li>
+                <strong>{{ schedule.name }}</strong>
+                <br>
+                <a href="{% url 'view_schedule' schedule.id %}">View Schedule</a>
+                <br>
+                <a href="{% url 'calendar_sync' %}">Sync with Google Calendar</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <a href="{% url 'home' %}">Return to Homepage</a>
 {% endblock content %}

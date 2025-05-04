@@ -1,11 +1,15 @@
 from django import forms
 from .models import Profile
 from .models import SchedulingSurvey
+from .models import Course
 
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['full_name', 'date_of_birth', 'email', 'phone_number', 'profile_picture']
+        fields = ['full_name', 'date_of_birth', 'phone_number', 'additional_info', 'profile_picture']
+        widgets = {
+            'date_of_birth': forms.DateInput(attrs={'type': 'date'}),
+        }
         
 class SchedulingSurveyForm(forms.ModelForm):
     class Meta:
@@ -30,6 +34,12 @@ class SchedulingSurveyForm(forms.ModelForm):
                 ('gaps', 'Gaps between classes'),
                 ('no_pref', 'No preference')
             ]),
+            'preferred_distribution': forms.RadioSelect(choices=SchedulingSurvey.PREFERRED_DISTRIBUTION_CHOICES),
+            'time_distribution': forms.RadioSelect(choices=SchedulingSurvey.TIME_DISTRIBUTION_CHOICES),
+            'clustered_or_spread': forms.RadioSelect(choices=[
+                ('clustered', 'Clustered on fewer days'),
+                ('spread', 'Spread throughout the week')
+            ]),
             'learning_style': forms.RadioSelect(choices=[
                 ('lecture', 'Lecture-based'), 
                 ('hands_on', 'Hands-on / Lab'),
@@ -42,10 +52,9 @@ class SchedulingSurveyForm(forms.ModelForm):
                 ('online_async', 'Online (asynchronous)'), 
                 ('hybrid', 'Hybrid')
             ]),
-            'preferred_distribution': forms.RadioSelect(choices=SchedulingSurvey.PREFERRED_DISTRIBUTION_CHOICES),
-            'time_distribution': forms.RadioSelect(choices=SchedulingSurvey.TIME_DISTRIBUTION_CHOICES),
-            'clustered_or_spread': forms.RadioSelect(choices=[
-                ('clustered', 'Clustered on fewer days'),
-                ('spread', 'Spread throughout the week')
-            ]),
         }
+
+class CourseForm(forms.ModelForm):
+    class Meta:
+        model = Course
+        fields = ['code', 'name', 'credits', 'prerequisites', 'corequisites', 'crosslisted_courses', 'description']

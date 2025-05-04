@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Filter Courses</title>
+</head>
+<body>
+    <h1>Filter Courses</h1>
+    <form method="get">
+        <label for="subject">Subject:</label>
+        <input type="text" name="subject" id="subject">
+        <br>
+        <label for="course_number">Course Number:</label>
+        <input type="text" name="course_number" id="course_number">
+        <br>
+        <label>Meeting Days:</label>
+        <input type="checkbox" name="meeting_days" value="mo"> Monday
+        <input type="checkbox" name="meeting_days" value="tu"> Tuesday
+        <input type="checkbox" name="meeting_days" value="we"> Wednesday
+        <input type="checkbox" name="meeting_days" value="th"> Thursday
+        <input type="checkbox" name="meeting_days" value="fr"> Friday
+        <br>
+        <label for="start_time">Start Time:</label>
+        <input type="time" name="start_time" id="start_time">
+        <br>
+        <label for="end_time">End Time:</label>
+        <input type="time" name="end_time" id="end_time">
+        <br>
+        <button type="submit">Filter</button>
+    </form>
+
+    <h2>Results</h2>
+    <ul>
+        {% for section in sections %}
+            <li>
+                {{ section.course.code }} - {{ section.course.name }}<br>
+                Instructor: {{ section.instructor_first_name }} {{ section.instructor_last_name }}<br>
+                Meeting Days: 
+                {% if section.mo %}Monday {% endif %}
+                {% if section.tu %}Tuesday {% endif %}
+                {% if section.we %}Wednesday {% endif %}
+                {% if section.th %}Thursday {% endif %}
+                {% if section.fr %}Friday {% endif %}
+                <br>
+                Time: {{ section.begins }} - {{ section.ends }}
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

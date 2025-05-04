@@ -4,19 +4,55 @@
         <title>Create Schedule</title>
     </head>
     <body>
-        <h1>Create a Schedule</h1>
+        <h1>Create a New Schedule</h1>
+
+        <!-- Search Bar -->
+        <form method="get">
+            <input type="text" name="query" placeholder="Search by subject, course number, or course code..." value="{{ query }}">
+            <button type="submit">Search</button>
+        </form>
+
+        <!-- Filtered Course List -->
+        <h2>Available Sections</h2>
+        <ul>
+            {% for section in sections %}
+                <li>
+                    {{ section.course.code }} - {{ section.course.name }} ({{ section.section_code }})
+                    <br>
+                    <strong>Time:</strong> {{ section.begins }} - {{ section.ends }}
+                    <br>
+                    <strong>Days:</strong>
+                    {% if section.mo %} Monday {% endif %}
+                    {% if section.tu %} Tuesday {% endif %}
+                    {% if section.we %} Wednesday {% endif %}
+                    {% if section.th %} Thursday {% endif %}
+                    {% if section.fr %} Friday {% endif %}
+                    <form method="post" style="display: inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="section_id" value="{{ section.id }}">
+                        <input type="hidden" name="action" value="add_course">
+                        <button type="submit">Add to List</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <!-- Selected Courses -->
+        <h2>Selected Courses</h2>
+        <ul>
+            {% for section in selected_courses %}
+                <li>{{ section.course.code }} - {{ section.course.name }} ({{ section.section_code }})</li>
+            {% endfor %}
+        </ul>
+
+        <!-- Create Schedule Form -->
         <form method="post">
             {% csrf_token %}
-            <label for="name">Schedule Name:</label>
-            <input type="text" id="name" name="name" required><br><br>
-
-            <label for="sections">Select Sections:</label><br>
-            {% for section in sections %}
-                <input type="checkbox" name="sections" value="{{ section.id }}"> 
-                {{ section.course.name }} - {{ section.section_code }}<br>
-            {% endfor %}
-
+            <input type="hidden" name="action" value="create_schedule">
+            <label for="schedule_name">Schedule Name:</label>
+            <input type="text" name="schedule_name" id="schedule_name" placeholder="Enter schedule name">
             <button type="submit">Create Schedule</button>
         </form>
+        <a href="{% url 'home' %}">Return to Homepage</a>"
     </body>
 </html>

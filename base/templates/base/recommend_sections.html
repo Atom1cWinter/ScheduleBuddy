@@ -1,0 +1,9 @@
+<h1>Recommended Sections</h1>
+<ul>
+    {% for section in sections %}
+        <li>
+            {{ section.course.code }} - {{ section.course.name }}<br>
+            Time: {{ section.begins }} - {{ section.ends }}
+        </li>
+    {% endfor %}
+</ul>

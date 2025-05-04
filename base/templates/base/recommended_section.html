@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Recommended Sections</title>
+</head>
+<body>
+    <h1>Recommended Sections</h1>
+
+    <!-- Search Form -->
+    <form method="get" action="{% url 'recommend_sections' %}">
+        <label for="course_code">Search by Course Code:</label>
+        <input type="text" id="course_code" name="course_code" placeholder="e.g., ITSC3155" value="{{ request.GET.course_code }}">
+        <button type="submit">Search</button>
+    </form>
+
+    <hr>
+
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% elif sections %}
+        <h2>Course Code: {{ course_code }}</h2>
+        <ul>
+            {% for section in sections %}
+                <li>
+                    <strong>Section Code:</strong> {{ section.section_code }}<br>
+                    <strong>CRN:</strong> {{ section.crn }}<br>
+                    <strong>Time:</strong> {{ section.begins }} - {{ section.ends }}<br>
+                    <strong>Days:</strong>
+                    {% if section.mo %} Monday {% endif %}
+                    {% if section.tu %} Tuesday {% endif %}
+                    {% if section.we %} Wednesday {% endif %}
+                    {% if section.th %} Thursday {% endif %}
+                    {% if section.fr %} Friday {% endif %}
+                    {% if section.sa %} Saturday {% endif %}
+                    {% if section.su %} Sunday {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No sections found for the given course code.</p>
+    {% endif %}
+
+    <a href="{% url 'home' %}">Return to Homepage</a>
+</body>
+</html>

@@ -4,11 +4,10 @@
 
 <div>
     <a href="/survey"><h3>Survey</h3></a>
-    <br>
-    <br>
-    <a href="/calendarSync"><h3>Calendar Sync</h3></a>
-    <a href="/courseLoad"><h3>Course Load Suggestion</h3></a>
-    <a href="% url 'recommend_section' 1 %"><h3>Section Recommendations</h3></a>
+    <a href="{% url 'recommend_sections' %}"><h3>Section Recommendations</h3></a>
+    <a href="{% url 'course_load' %}"><h3>Course Load Suggestion</h3></a>
+    <a href="{% url 'create_schedule' %}"><h3>Create Schedule</h3></a>
+    <a href="{% url 'calendar_sync' %}"><h3>Calendar Sync</h3></a>
 </div>
 
 <hr>

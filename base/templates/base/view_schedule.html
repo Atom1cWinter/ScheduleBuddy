@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View Schedule</title>
+</head>
+<body>
+    <h1>{{ schedule.name }}</h1>
+    <h2>Sections</h2>
+    <ul>
+        {% for section in schedule.sections.all %}
+            <li>
+                {{ section.course.code }} - {{ section.course.name }} ({{ section.section_code }})
+                <br>
+                <strong>Time:</strong> {{ section.begins }} - {{ section.ends }}
+                <br>
+                <strong>Days:</strong>
+                {% if section.mo %} Monday {% endif %}
+                {% if section.tu %} Tuesday {% endif %}
+                {% if section.we %} Wednesday {% endif %}
+                {% if section.th %} Thursday {% endif %}
+                {% if section.fr %} Friday {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'calendar_sync' %}">Sync with Google Calendar</a>
+    <br>
+    <a href="{% url 'home' %}">Return to Homepage</a>
+</body>
+</html>
