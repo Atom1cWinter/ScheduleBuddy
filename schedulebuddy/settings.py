@@ -122,6 +122,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# Redirect to the profile page after login
+LOGIN_REDIRECT_URL = '/profile/'
+# Redirect to home page by changing '/profile/' to '/'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 

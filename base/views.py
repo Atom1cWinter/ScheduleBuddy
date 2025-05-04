@@ -12,6 +12,8 @@ from .models import Schedule # Calendar setup
 from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
 from django.db.models import Q # used for section rec
+from django.contrib.auth.forms import UserCreationForm # for user registration
+from django.contrib import messages # also for user registration
 
 import random
 import datetime
@@ -287,4 +289,21 @@ def recommend_section(request, course_id):
     else:
         return JsonResponse({'error' : 'No suitable sections found for the course'}, status=404)
     
-    
+
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()  # Save the user
+            messages.success(request, 'Your account has been created! You can now log in.')
+            return redirect('login')
+    else:
+        form = UserCreationForm()  # Initialize an empty form for GET requests
+
+    # Always pass the form to the template
+    return render(request, 'base/register.html', {'form': form})
+
+@login_required
+def profile_view(request):
+    # pass the logged-in user to the template
+    return render(request, 'base/profile.html', {'user' : request.user})

@@ -144,3 +144,17 @@ class Schedule(models.Model):
         
     def __str__(self):
         return f"{self.name} ({self.user.username})"
+    
+    # User Profile Model
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    full_name = models.CharField(max_length=255, blank=True, null=True)
+    date_of_birth = models.DateField(null=True, blank=True)
+    email = models.EmailField(blank=True, null=True) # did not set up for unique email
+    phone_number = models.CharField(max_length=20, blank=True, null=True)
+    profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
+    survey_results = models.JSONField(blank=True, null=True) # Store survey results as JSON
+    additional_info = models.TextField(blank=True, null=True) # Optional additional info
+
+    def __str__(self):
+        return self.user.username
