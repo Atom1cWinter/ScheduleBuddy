@@ -1,0 +1,15 @@
+{% extends 'main.html' %}
+
+{% block content %}
+    <h1>{{ user.username }}'s Profile</h1>
+    <p><strong>Full Name:</strong> {{ user.profile.full_name }}</p>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    <p><strong>Date of Birth:</strong> {{ user.profile.date_of_birth }}</p>
+    <p><strong>Phone Number:</strong> {{ user.profile.phone_number }}</p>
+    <p><strong>Additional Info:</strong> {{ user.profile.additional_info }}</p>
+    {% if user.profile.profile_picture %}
+        <p><strong>Profile Picture:</strong></p>
+        <img src="{{ user.profile.profile_picture.url }}" alt="Profile Picture" style="max-width: 200px;">
+    {% endif %}
+    <a href="{% url 'home' %}">Back to Home</a>
+{% endblock content %}

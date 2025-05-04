@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% extends 'main.html' %}
 {% block content %}
 <h2>Student Scheduling Survey</h2>
@@ -7,3 +8,19 @@
   <button type="submit">Submit</button>
 </form>
 {% endblock content %}
+=======
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scheduling Survey</title>
+</head>
+<body>
+    <h1>Scheduling Survey</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
+>>>>>>> 40265fa96d43daf7e52e876c31df26ca56378ddb

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Course List</title>
+    </head>
+    <body>
+        <h1>Course List</h1>
+        <table border="1">
+            <tr>
+                <th>Title</th>
+                <th>Course Number</th>
+                <th>Professor</th>
+                <th>Start Date</th>
+                <th>Meeting Dates</th>
+                <th>Meeting Times</th>
+                <th>End Date</th>
+                <th>Class Type</th>
+                <th>Location</th>
+            </tr>
+            {% for course in courses %}
+            <tr>
+                <td>{{ course.title }}</td>
+                <td>{{ course.course_number }}</td>
+                <td>{{ course.professor }}</td>
+                <td>{{ course.start_date }}</td>
+                <td>{{ course.meeting_dates }}</td>
+                <td>{{ course.meeting_times }}</td>
+                <td>{{ course.end_date }}</td>
+                <td>{{ course.class_type }}</td>
+                <td>{{ course.location }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </body>
+</html>

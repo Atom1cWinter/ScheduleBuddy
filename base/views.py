@@ -3,12 +3,28 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 
+<<<<<<< HEAD
 from .models import Profile  #need to import your Profile model
+=======
+from .models import Profile  # need to import your Profile model
+>>>>>>> 40265fa96d43daf7e52e876c31df26ca56378ddb
 from .forms import ProfileForm  # need to create this form
 from .models import Course # course template import
 from .forms import SchedulingSurveyForm
 from .models import SchedulingSurvey, Course, Section
+<<<<<<< HEAD
 import random
+=======
+from .models import Schedule # Calendar setup
+from googleapiclient.discovery import build
+from google.oauth2.credentials import Credentials
+from django.db.models import Q # used for section rec
+from django.contrib.auth.forms import UserCreationForm # for user registration
+from django.contrib import messages # also for user registration
+
+import random
+import datetime
+>>>>>>> 40265fa96d43daf7e52e876c31df26ca56378ddb
 
 def home(request):
     return render(request, 'base/home.html')
@@ -30,10 +46,13 @@ def openSeat(request):
 def sectionRec(request):
     return render(request, 'base/sectionRec.html')
 
+<<<<<<< HEAD
 def login_view(request):
     return render(request, 'base/loginpage.html')
 
 
+=======
+>>>>>>> 40265fa96d43daf7e52e876c31df26ca56378ddb
 @login_required
 def profile_view(request):
     try:
@@ -101,7 +120,12 @@ def get_courses(request):
         # Add course ID at the end of URL request
         if request.method == 'GET':
             # split URL into IDs and fetch courses
+<<<<<<< HEAD
             id_list = ids.split(',')
+=======
+            ids = request.GET.get('ids', '')  # Extract 'ids' from query parameters
+            id_list = ids.split(',') if ids else []  # Split only if 'ids' is not empty
+>>>>>>> 40265fa96d43daf7e52e876c31df26ca56378ddb
             courses = Course.objects.filter(id__in = id_list).values(
                 'id',
                 'title',
@@ -151,4 +175,158 @@ def courseLoad(request):
     return render(request, 'courseLoad.html', {
         'survey': survey,
         'schedule': schedule,
+<<<<<<< HEAD
     })
+=======
+    })
+
+def create_schedule(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        section_ids = request.POST.getlist('sections') # List of section IDs
+        sections = Section.objects.filter(id__in = section_ids)
+
+        schedule = Schedule.objects.create(user = request.user, name = name)
+        schedule.sections.set(sections)
+
+        return JsonResponse({'message' : 'Schedule created successfully!', 'schedule_id' : schedule.id})
+    else:
+        sections = Section.objects.all()
+        return render(request, 'create_schedule.html', {'sections' : sections})
+    
+def export_schedule_to_google_calendar(request, schedule_id):
+    # Load the schedule
+    schedule = Schedule.objects.get(id = schedule_id, user=request.user)
+    sections = schedule.sections.all()
+
+    # Load Google Calendar credentials
+    creds = Credentials.from_authorized_user_file('credentials.json', ['https://www.googleapis.com/auth/calendar'])
+    service = build('calendar', 'v3', credentials=creds)
+
+    # Iterate through sections and add them to Google Calendar
+    for section in sections:
+        # Format the recurrence rule for meeting days
+        meeting_days = []
+        if section.mo: meeting_days.append('MO')
+        if section.tu: meeting_days.append('TU')
+        if section.we: meeting_days.append('WE')
+        if section.th: meeting_days.append('TH')
+        if section.fr: meeting_days.append('FR')
+        if section.sa: meeting_days.append('SA')
+        if section.su: meeting_days.append('SU')
+
+        # create the event
+        event = {
+            'summary': section.course.name, # Course name
+            'description': f"Start Date: {section.start_date}, End Date: {section.end_date}",
+            'start': {
+                'dateTime': f"{section.start_date}T{section.begins}", # Start date and time
+                'TimeZone': 'America/New_York', # Default Timezone for UNCC
+            },
+            'end': {
+                'dateTime': f"{section.start_date}T{section.ends}", # End date and time
+                'timeZone': 'America/New_York',
+            },
+            'recurrence': [
+                f"RRULE:FREQ=WEEKLY;BYDAY={','.join(meeting_days)};UNTIL={section.end_date.strftime('%Y%m%d')}T235959Z"
+            ],
+        }
+
+        # Insert the event into Google Calendar
+        service.events().insert(calendarId='primary', body = event).execute()
+
+    return JsonResponse({'message' : 'Schedule exported to Google Calendar successfully!'})
+
+@login_required
+def calendarySync(request):
+    # Retrive the user's schedule (assuming one schedule per user)
+    try:
+        schedule = Schedule.objects.get(user=request.user)
+    except Schedule.DoesNotExist:
+        return render(request, 'base/calendarSync.html', {'error': 'No schedule found.'})
+    
+    return render(request, 'base/calendarSync.html', {'schedule_id' : 'schedlue.id'})
+
+@login_required
+def recommend_section(request, course_id):
+    user = request.user
+
+    # Get the user's survey
+    try:
+        survey = SchedulingSurvey.objects.get(user=user)
+    except SchedulingSurvey.DoesNotExist:
+        return JsonResponse({'error': 'No survey found for the user'}, status=404)
+    
+    # Get the course
+    course = get_object_or_404(Course, id=course_id)
+
+    # Filter sections based on survey preferences
+    sections = Section.objects.filter(course=course)
+
+    # Apply filters based on survey preferences
+    if not survey.night_classes_ok:
+        sections = sections.filter(begins__lt="18:00:00") # Exclude sections starting after 6pm
+    
+    if survey.max_classes_per_day:
+        # Example: Limit number of sections per day (requires more work and might be implemented later)
+        pass
+
+    # Example: Filter sections based on preferred days
+    preferred_days = []
+    if survey.clustered_or_spread == "Clustered":
+        # Check if the user prefers Monday/Wednesday/Friday or Tuesday/Thursday
+        if survey.preferred_distribution == "MWF":
+            preferred_days = ['MO', 'WE', 'FR']
+        elif survey.preferred_distribution == "TTH":
+            preferred_days = ['TU', 'TH']
+    elif survey.clustered_or_spread == "Spread":
+        preferred_days = ['MO', 'TU', 'WE', 'TH', 'FR']
+
+    if preferred_days:
+        sections = sections.filter(
+            Q(mo=True) & Q(mo__in=preferred_days) |
+            Q(tu=True) & Q(tu__in=preferred_days) |
+            Q(we=True) & Q(we__in=preferred_days) |
+            Q(th=True) & Q(th__in=preferred_days) |
+            Q(fr=True) & Q(fr__in=preferred_days)
+        )
+
+    # Filter sections based on time distribution
+    if survey.time_distribution == "morning":
+        sections = sections.filter(begins__lt="12:00:00")
+    elif survey.time_distribution == "afternoon":
+        sections = sections.filter(begins__gte="12:00:00", begins__lt="16:00:00")
+    elif survey.time_distribution == "even":
+        pass # No filter needed for evenly distributed
+    
+    # Sort sections by start time
+    sections = sections.order_by('begins')
+
+    # Return the recommended section
+    if sections.exists():
+        recommended_section = sections.first()
+        return render(request, 'recommended_section.html', {
+            'course': course,
+            'section': recommended_section})
+    else:
+        return JsonResponse({'error' : 'No suitable sections found for the course'}, status=404)
+    
+
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()  # Save the user
+            messages.success(request, 'Your account has been created! You can now log in.')
+            return redirect('login')
+    else:
+        form = UserCreationForm()  # Initialize an empty form for GET requests
+
+    # Always pass the form to the template
+    return render(request, 'base/register.html', {'form': form})
+
+@login_required
+def profile_view(request):
+    # pass the logged-in user to the template
+    return render(request, 'base/profile.html', {'user' : request.user})
+>>>>>>> 40265fa96d43daf7e52e876c31df26ca56378ddb

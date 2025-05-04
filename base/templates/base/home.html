@@ -1,5 +1,6 @@
 {% extends 'main.html' %}
 {% block content %}
+<<<<<<< HEAD
 <h1>Template</h1>
 
 <div>
@@ -10,5 +11,31 @@
     <a href="/openSeat"><h3>Open Seat Notifications</h3></a>
     <a href="/sectionRec"><h3>Section Recommendations</h3></a>
     <a href="/survey"><h3>Survey</h3></a>
+=======
+<h1>Welcome to ScheduleBuddy</h1>
+
+<div>
+    <a href="/survey"><h3>Survey</h3></a>
+    <br>
+    <br>
+    <a href="/calendarSync"><h3>Calendar Sync</h3></a>
+    <a href="/courseLoad"><h3>Course Load Suggestion</h3></a>
+    <a href="% url 'recommend_section' 1 %"><h3>Section Recommendations</h3></a>
+</div>
+
+<hr>
+
+<div>
+    <h2>User Options</h2>
+    <ul>
+        {% if user.is_authenticated %}
+            <li><a href="{% url 'profile' %}">View Profile</a></li>
+            <li><a href="{% url 'logout' %}">Logout</a></li>
+        {% else %}
+            <li><a href="{% url 'login' %}">Login</a></li>
+            <li><a href="{% url 'register' %}">Register</a></li>
+        {% endif %}
+    </ul>
+>>>>>>> 40265fa96d43daf7e52e876c31df26ca56378ddb
 </div>
 {% endblock content %}

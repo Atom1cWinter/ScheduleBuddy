@@ -1,6 +1,10 @@
 from django.db import models
 
 from django.contrib.auth.models import User
+<<<<<<< HEAD
+=======
+from django.forms import ValidationError
+>>>>>>> 40265fa96d43daf7e52e876c31df26ca56378ddb
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -67,6 +71,21 @@ class SchedulingSurvey(models.Model):
         ('GR', 'Graduate'),
     ]
 
+<<<<<<< HEAD
+=======
+    PREFERRED_DISTRIBUTION_CHOICES = [
+        ('MWF', 'Monday/Wednesday/Friday'),
+        ('TTH', 'Tuesday/Thursday'),
+        ('Spread', 'Spread Across Week'),
+    ]
+
+    TIME_DISTRIBUTION_CHOICES = [
+        ('morning', 'Morning-heavy'),
+        ('afternoon', 'Afternoon-heavy'),
+        ('even', 'Evenly distributed'),
+    ]
+
+>>>>>>> 40265fa96d43daf7e52e876c31df26ca56378ddb
     name = models.CharField(max_length=100)
     email = models.EmailField()
     year = models.CharField(max_length=2, choices=YEAR_CHOICES)
@@ -92,7 +111,22 @@ class SchedulingSurvey(models.Model):
     career_goals = models.TextField(blank=True)
     elective_interests = models.TextField(blank=True)
 
+<<<<<<< HEAD
     preferred_distribution = models.CharField(max_length=50)
+=======
+    preferred_distribution = models.CharField(
+        max_length=50,
+        choices=PREFERRED_DISTRIBUTION_CHOICES,
+        default='Spread'
+    )
+    
+    time_distribution = models.CharField(
+        max_length=50,
+        choices=TIME_DISTRIBUTION_CHOICES,
+        default='even'
+    )
+
+>>>>>>> 40265fa96d43daf7e52e876c31df26ca56378ddb
     max_classes_per_day = models.IntegerField()
     min_gap_minutes = models.IntegerField()
     clustered_or_spread = models.CharField(max_length=50)
@@ -102,4 +136,39 @@ class SchedulingSurvey(models.Model):
     other_notes = models.TextField(blank=True)
 
     def __str__(self):
+<<<<<<< HEAD
         return f"{self.name} ({self.email})"
+=======
+        return f"{self.name} ({self.email})"
+    
+# Calendar Implementation
+class Schedule(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    sections = models.ManyToManyField(Section)
+    created_at = models.DateTimeField(auto_now_add=True)
+    google_calendar_event_id = models.CharField(max_length=255, blank=True, null=True)
+
+    def clean(self):
+        if self.start_date and self.end_date and self.start_date > self.end_date:
+            raise ValidationError("End date must be after start date.")
+        if self.begins and self.ends and self.begins >= self.ends:
+            raise ValidationError("End time must be after start time.")
+        
+    def __str__(self):
+        return f"{self.name} ({self.user.username})"
+    
+    # User Profile Model
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    full_name = models.CharField(max_length=255, blank=True, null=True)
+    date_of_birth = models.DateField(null=True, blank=True)
+    email = models.EmailField(blank=True, null=True) # did not set up for unique email
+    phone_number = models.CharField(max_length=20, blank=True, null=True)
+    profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
+    survey_results = models.JSONField(blank=True, null=True) # Store survey results as JSON
+    additional_info = models.TextField(blank=True, null=True) # Optional additional info
+
+    def __str__(self):
+        return self.user.username
+>>>>>>> 40265fa96d43daf7e52e876c31df26ca56378ddb
