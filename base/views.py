@@ -3,8 +3,6 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.contrib import messages
 from django.db.models import Q
-from googleapiclient.discovery import build
-from google.oauth2.credentials import Credentials
 from django.contrib.auth.forms import UserCreationForm
 
 from .models import Profile, Course, Section, Schedule, SchedulingSurvey
@@ -99,31 +97,7 @@ def sort_sections_by_survey(survey, sections):
     return [section for section, score in sorted_sections]
 
 
-def export_schedule_to_google_calendar(schedule):
-    """Export a schedule to Google Calendar."""
-    creds = Credentials.from_authorized_user_file('credentials.json', ['https://www.googleapis.com/auth/calendar'])
-    service = build('calendar', 'v3', credentials=creds)
-
-    for section in schedule.sections.all():
-        meeting_days = []
-        if section.mo: meeting_days.append('MO')
-        if section.tu: meeting_days.append('TU')
-        if section.we: meeting_days.append('WE')
-        if section.th: meeting_days.append('TH')
-        if section.fr: meeting_days.append('FR')
-        if section.sa: meeting_days.append('SA')
-        if section.su: meeting_days.append('SU')
-
-        event = {
-            'summary': section.course.name,
-            'description': f"Start Date: {section.start_date}, End Date: {section.end_date}",
-            'start': {'dateTime': f"{section.start_date}T{section.begins}", 'timeZone': 'America/New_York'},
-            'end': {'dateTime': f"{section.start_date}T{section.ends}", 'timeZone': 'America/New_York'},
-            'recurrence': [
-                f"RRULE:FREQ=WEEKLY;BYDAY={','.join(meeting_days)};UNTIL={section.end_date.strftime('%Y%m%d')}T235959Z"
-            ],
-        }
-        service.events().insert(calendarId='primary', body=event).execute()
+# Temporarily removed export_schedule_to_google_calendar function
 
 # -------------------------------------------------
 # Views: Home and Authentication
@@ -289,9 +263,8 @@ def create_schedule(request):
 
 @login_required
 def export_schedule(request, schedule_id):
-    schedule = get_object_or_404(Schedule, id=schedule_id, user=request.user)
-    export_schedule_to_google_calendar(schedule)
-    return JsonResponse({'message': 'Schedule exported to Google Calendar successfully!'})
+    """Inform the user that exporting schedules is not currently available."""
+    return JsonResponse({'message': 'Exporting schedules to Google Calendar is currently not available.'}, status=503)
 
 
 @login_required
@@ -391,22 +364,9 @@ def course_list(request):
 
 @login_required
 def calendarSync(request):
-    """Sync the user's schedule with Google Calendar."""
-    try:
-        # Load Google API credentials
-        creds = Credentials.from_authorized_user_file('credentials.json', ['https://www.googleapis.com/auth/calendar'])
-        service = build('calendar', 'v3', credentials=creds)
-
-        # Example: Add a test event to the user's Google Calendar
-        event = {
-            'summary': 'Test Event',
-            'start': {'dateTime': '2025-05-05T10:00:00-07:00', 'timeZone': 'America/Los_Angeles'},
-            'end': {'dateTime': '2025-05-05T12:00:00-07:00', 'timeZone': 'America/Los_Angeles'},
-        }
-        service.events().insert(calendarId='primary', body=event).execute()
-
-        return JsonResponse({'message': 'Calendar synced successfully!'})
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+    """Inform the user that calendar sync is not currently available."""
+    return render(request, 'base/calendar_sync_unavailable.html', {
+        'message': 'Calendar sync is currently not available. Please try again later.'
+    })
 
 
