@@ -32,4 +32,9 @@
 {% else %}
     <p>No course suggestions available.</p>
 {% endif %}
+
+<!-- Add the Return to Homepage button -->
+<div style="margin-top: 20px;">
+    <a href="{% url 'home' %}" class="button">Return to Homepage</a>
+</div>
 {% endblock content %}
