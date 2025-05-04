@@ -16,6 +16,7 @@ urlpatterns = [
     path('filter_courses/', views.filter_courses, name='filter_courses'),
     path('add_course/', views.add_course, name='add_course'),
     path('get_courses/<str:ids>/', views.get_courses, name='get_courses'),
+    path('courses/', views.course_list, name='course_list'),
 
     # Schedule Management
     path('create_schedule/', views.create_schedule, name='create_schedule'),

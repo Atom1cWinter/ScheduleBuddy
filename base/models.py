@@ -1,9 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.forms import ValidationError
 
 
+# -------------------------------------------------
 # User Profile Model
+# -------------------------------------------------
+
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     full_name = models.CharField(max_length=255, blank=True, null=True)
@@ -18,13 +20,16 @@ class Profile(models.Model):
             return f"{self.survey.name} ({self.survey.email})"
         return "No survey results"
 
-    survey_results.short_description = "Survey Results"  # This sets the column name in the admin panel
+    survey_results.short_description = "Survey Results"
 
     def __str__(self):
         return self.user.username
 
 
+# -------------------------------------------------
 # Course Model
+# -------------------------------------------------
+
 class Course(models.Model):
     code = models.CharField(max_length=20, default='UNKN')  # e.g., "MATH101"
     name = models.CharField(max_length=200, default='Untitled Course')
@@ -38,7 +43,10 @@ class Course(models.Model):
         return f"{self.code}: {self.name}"
 
 
+# -------------------------------------------------
 # Section Model
+# -------------------------------------------------
+
 class Section(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     term = models.CharField(max_length=20, default='TBD')  # e.g., "Fall 2025"
@@ -46,7 +54,7 @@ class Section(models.Model):
     section_code = models.CharField(max_length=10, default='A')
     subject = models.CharField(max_length=10, null=True, blank=True)  # e.g., "CS"
     course_number = models.CharField(max_length=10, null=True, blank=True)  # e.g., "101"
-    course_code = models.CharField(max_length=20, null=True, blank=True) # e.g., "ITSC 3155"
+    course_code = models.CharField(max_length=20, null=True, blank=True)  # e.g., "ITSC 3155"
     begins = models.TimeField(null=True, blank=True)
     ends = models.TimeField(null=True, blank=True)
     mo = models.BooleanField(default=False)  # Monday
@@ -69,7 +77,10 @@ class Section(models.Model):
         return f"{self.course.code} - {self.section_code} ({', '.join(days)})"
 
 
+# -------------------------------------------------
 # Scheduling Survey Model
+# -------------------------------------------------
+
 class SchedulingSurvey(models.Model):
     # Choices
     YEAR_CHOICES = [
@@ -91,7 +102,7 @@ class SchedulingSurvey(models.Model):
     ]
 
     # Link to the user
-    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)  # Add this field
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
 
     # Basic Information
     name = models.CharField(max_length=100)
@@ -137,7 +148,10 @@ class SchedulingSurvey(models.Model):
         return f"{self.name} ({self.email})"
 
 
+# -------------------------------------------------
 # Schedule Model
+# -------------------------------------------------
+
 class Schedule(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)

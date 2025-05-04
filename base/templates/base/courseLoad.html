@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Course Load</title>
+</head>
+<body>
+    <h1>Your Suggested Course Load</h1>
+    <ul>
+        {% for section in schedule %}
+            <li>
+                <strong>{{ section.course.name }}</strong> - {{ section.section_code }}<br>
+                <strong>Days:</strong> 
+                {% for day in ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su'] %}
+                    {% if section|getattr:day %}
+                        {{ day|upper }}
+                    {% endif %}
+                {% endfor %}<br>
+                <strong>Time:</strong> {{ section.begins }} - {{ section.ends }}<br>
+                <strong>Location:</strong> {{ section.building }} {{ section.room }}
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
