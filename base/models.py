@@ -64,6 +64,12 @@ class Section(models.Model):
     fr = models.BooleanField(default=False)  # Friday
     sa = models.BooleanField(default=False)  # Saturday
     su = models.BooleanField(default=False)  # Sunday
+    instructor_first_name = models.CharField(max_length=100, blank=True, null=True)
+    instructor_last_name = models.CharField(max_length=100, blank=True, null=True)
+    building = models.CharField(max_length=100, blank=True, null=True)
+    room = models.CharField(max_length=20, blank=True, null=True)
+    mode = models.CharField(max_length=100, blank=True, null=True)  # e.g., Face-to-Face Instruction
+    instructional_method = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
         days = []

@@ -307,18 +307,52 @@ def courseLoad(request):
     except SchedulingSurvey.DoesNotExist:
         return render(request, 'base/no_survey.html')
 
-    all_courses = Course.objects.all()
-    suggested_courses = random.sample(list(all_courses), min(5, len(all_courses)))
+    sections = Section.objects.all()
 
-    schedule = []
-    for course in suggested_courses:
-        sections = Section.objects.filter(course=course)
-        if sections.exists():
-            schedule.append(sections.first())
+    # Apply format preference filter
+    if survey.format_preference:
+        sections = sections.filter(mode=survey.format_preference)
+
+    # Apply preferred days filter
+    preferred_days = survey.preferred_days or []
+    day_fields = {'M': 'mo', 'T': 'tu', 'W': 'we', 'Th': 'th', 'F': 'fr'}
+    day_filters = {f"{day_fields[d]}__isnull": False for d in preferred_days if d in day_fields}
+    for day, value in day_filters.items():
+        sections = sections.filter(**{day: True})  # Filter to include only sections that meet the preferred days
+
+    # Apply preferred times filter
+    preferred_times = survey.preferred_times or []
+    time_ranges = {
+        '8-10': (8, 10), '10-12': (10, 12),
+        '12-2': (12, 14), '2-4': (14, 16), '4+': (16, 24)
+    }
+
+    filtered_sections = []
+    for section in sections:
+        try:
+            hour = int(section.begins.strftime('%H'))  # Extract hour correctly from TimeField
+            for pref in preferred_times:
+                low, high = time_ranges.get(pref, (0, 24))
+                if low <= hour < high:
+                    filtered_sections.append(section)
+                    break
+        except Exception as e:
+            print(f"Error processing section {section}: {e}")
+            continue
+
+    # Remove duplicates and limit to 5 courses
+    seen_courses = set()
+    final_schedule = []
+    for section in filtered_sections:
+        if section.course.id not in seen_courses:
+            final_schedule.append(section)
+            seen_courses.add(section.course.id)
+        if len(final_schedule) == 5:
+            break
 
     return render(request, 'base/course_load.html', {
         'survey': survey,
-        'schedule': schedule,
+        'schedule': final_schedule,
     })
 
 

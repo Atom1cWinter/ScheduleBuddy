@@ -25,8 +25,8 @@ urlpatterns = [
     path('view_schedule/<int:schedule_id>/', views.view_schedule, name='view_schedule'),
 
     # Miscellaneous Features
-    path('calendar_sync/', views.calendarSync, name="calendar_sync"),
-    path('course_load/', views.courseLoad, name="course_load"),
+    path('calendarSync/', views.calendarSync, name="calendarSync"),
+    path('courseLoad/', views.courseLoad, name="courseLoad"),
     # Removed Roadmap
     # Removed Waitlist Clearance 
     # Removed Open Seat
