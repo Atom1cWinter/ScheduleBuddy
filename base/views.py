@@ -400,7 +400,7 @@ def course_list(request):
 def calendarSync(request):
     """Inform the user that calendar sync is not currently available."""
     return render(request, 'base/calendar_sync_unavailable.html', {
-        'message': 'Calendar sync is currently not available. Please try again later.'
+        'message': 'Calendar sync is still in development. Please try again later.'
     })
 
 
