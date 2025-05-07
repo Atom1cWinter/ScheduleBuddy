@@ -1,27 +1,42 @@
 {% extends 'main.html' %}
 {% block content %}
-<h1>Welcome to ScheduleBuddy</h1>
+<div class="wrapper">
+    <h1>Welcome to ScheduleBuddy</h1>
+    
+    <div class="nav-buttons">
+        <a href="/survey" class="nav-button">
+            <i class='bx bx-clipboard'></i>
+            <span>Survey</span>
+        </a>
+        <a href="/calendarSync" class="nav-button">
+            <i class='bx bx-calendar'></i>
+            <span>Calendar Sync</span>
+        </a>
+        <a href="/courseLoad" class="nav-button">
+            <i class='bx bx-book'></i>
+            <span>Course Load</span>
+        </a>
+        <a href="{% url 'recommend_section' 1 %}" class="nav-button">
+            <i class='bx bx-list-check'></i>
+            <span>Section Recommendations</span>
+        </a>
+        <a href="/create_schedule" class="nav-button">
+            <i class='bx bx-calendar-plus'></i>
+            <span>Create Schedule</span>
+        </a>
+    </div>
 
-<div>
-    <a href="/survey"><h3>Survey</h3></a>
-    <a href="{% url 'recommend_sections' %}"><h3>Section Recommendations</h3></a>
-    <a href="{% url 'course_load' %}"><h3>Course Load Suggestion</h3></a>
-    <a href="{% url 'create_schedule' %}"><h3>Create Schedule</h3></a>
-    <a href="{% url 'calendar_sync' %}"><h3>Calendar Sync</h3></a>
-</div>
-
-<hr>
-
-<div>
-    <h2>User Options</h2>
-    <ul>
-        {% if user.is_authenticated %}
-            <li><a href="{% url 'profile' %}">View Profile</a></li>
-            <li><a href="{% url 'logout' %}">Logout</a></li>
-        {% else %}
-            <li><a href="{% url 'login' %}">Login</a></li>
-            <li><a href="{% url 'register' %}">Register</a></li>
-        {% endif %}
-    </ul>
+    <div class="user-options">
+        <h2>User Options</h2>
+        <ul>
+            {% if user.is_authenticated %}
+                <li><a href="{% url 'profile' %}">View Profile</a></li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+            {% else %}
+                <li><a href="{% url 'login' %}">Login</a></li>
+                <li><a href="{% url 'register' %}">Register</a></li>
+            {% endif %}
+        </ul>
+    </div>
 </div>
 {% endblock content %}
